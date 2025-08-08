@@ -1,6 +1,5 @@
 import React, { useContext } from 'react'
 import { ContextAuth } from '../App'
-import { useNavigate } from 'react-router-dom'
 
 export const Dashboard = () => {
   const {setAuth} = useContext(ContextAuth)
