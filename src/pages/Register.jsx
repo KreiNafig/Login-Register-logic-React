@@ -36,6 +36,7 @@ export const Register = () => {
             && !password.errorMessage 
             && !checked.errorMessage) {
                 setAuth(() => true)
+                localStorage.setItem('token', 'true')
                 alert('Вы успешно зарегистрировались!')
                 navigate('/')
             }

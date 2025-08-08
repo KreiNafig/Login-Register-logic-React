@@ -27,11 +27,15 @@ export const Login = () => {
   
     function handleSubmit(e) {
       e.preventDefault()
-      if(!email.errorMessage && !password.errorMessage) {
-        setAuth(() => true)
-        alert('Вы успешно авторизовались')
-        navigate('/')
+      if(email.errorMessage || password.errorMessage) {
+        alert('Ошибка в форме')
+        return
       }
+
+      setAuth(true)
+      localStorage.setItem('token', true)
+      alert('Вы успешно авторизовались')
+      navigate('/')
     }
 
   return (
