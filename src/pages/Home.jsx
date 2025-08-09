@@ -1,5 +1,5 @@
 import React, { useContext } from 'react'
-import { NavLink } from 'react-router-dom'
+import { NavLink, Link } from 'react-router-dom'
 import { ContextAuth } from '../App'
 
 export const Home = () => {
@@ -11,9 +11,12 @@ export const Home = () => {
   return (
     <div>
         {auth ? <button onClick={handleClick}>Logout</button> : <NavLink to="/login"><button>Login</button></NavLink>}
-        <NavLink to="/dashboard">
+        <Link to="/dashboard">
             <button>К постам</button>
-        </NavLink>
+        </Link>
+        <Link to="/products"><button>К продуктам</button></Link>
     </div>
   )
 }
+
+export default Home
