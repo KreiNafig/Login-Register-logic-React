@@ -1,58 +1,58 @@
-import React from 'react'
-import { Link, Outlet, useNavigate, useSearchParams } from 'react-router-dom'
+import React, { useEffect, useMemo, useState } from 'react'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 
 export const Product = () => {
-    const [seartchParams, setSearchParams] = useSearchParams()
+    const [searchParams, setSearchParams] = useSearchParams()
+    const [products, setProducts] = useState([])
     const navigate = useNavigate()
-    const q = seartchParams.get('q') || ''
-      const products = [
-    {
-      id: 1,
-      name: "Смартфон iPhone 15 Pro",
-      price: 129990,
-      description: "Новый iPhone 15 Pro с титановым корпусом, процессором A17 Pro и улучшенной камерой 48 МП.",
-      image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSgiHKSGqqCE_8bgMnlgNrBFJFSCHyrTkIwlA&s"
-    },
-    {
-      id: 2,
-      name: "Ноутбук MacBook Air M2",
-      price: 99990,
-      description: "Легкий и мощный ноутбук с чипом Apple M2, 13-дюймовым экраном Retina и долгим временем работы от батареи.",
-      image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS4_NJj3RP0y05B77dFesH58YJUTds1nec4xQ&s"
-    },
-    {
-      id: 3,
-      name: "Наушники Sony WH-1000XM5",
-      price: 34990,
-      description: "Беспроводные наушники с продвинутым шумоподавлением, отличным звуком и автономностью до 30 часов.",
-      image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSOux4xPx67B3OnDxjDlNlRkvE8msB70vjl7Q&s"
-    },
-    {
-      id: 4,
-      name: "Умная колонка Яндекс Станция 2",
-      price: 19990,
-      description: "Умная колонка с голосовым помощником Алисой, поддержкой стриминговых сервисов и качественным звуком.",
-      image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTxcGbzpD6QRiMcjI1KEtzVARtcgUndTdG-VQ&s"
-    }
-  ];
+    const q = searchParams.get('q') || ''
+    
+    useEffect(() => {
+      fetch('https://fakestoreapi.com/products')
+        .then((res) => res.json())
+        .then((data) => setProducts(data))
+    }, [])
 
-  const items = products.filter((e) => e.name.toLowerCase().includes(q.toLowerCase()))
+    function filterProduct(type = '') {
+      // eslint-disable-next-line default-case
+      switch(type) {
+        case 'asd': {
+          const filterProduct = [...products].sort((a, b) => a.price - b.price)
+          setProducts(filterProduct)
+          break;
+          }          
+        case 'dsa': {
+          const filterProduct = [...products].sort((a, b) => b.price - a.price)
+          setProducts(filterProduct)
+          break
+        }
+      }
+    }
+
+
+  const items = useMemo(() => {
+    if(products.length === 0) return []
+    console.log('перефильтрация')
+    return products?.filter((e) => e.title.toLowerCase().includes(q.toLowerCase()))
+  }, [products, q])
   
   return (
     <div>
-        <input value={q} onChange={(e) => setSearchParams({q: e.target.value})} placeholder='Введите фильтр' />
+        <input value={q} onChange={(e) => setSearchParams({...searchParams, q: e.target.value})} placeholder='Введите название' />
+        <button onClick={() => filterProduct('asd')}>Минимальная - Максимальная</button>
+        <button onClick={() => filterProduct('dsa')}>Максимальная - Минимальная</button>
         <button onClick={() => navigate('/')}>Вернуться назад</button>
-        {items.map((e) => {
+        {items?.map((e) => {
             return(
                 <div key={e.id}>
-                    <h1>{e.name}</h1>
+                    <h1>{e.title}</h1>
+                    <img src={e.image} alt={e.category}/>
                     <p>{e.description}</p>
-                    <h3>{e.price} рублей</h3>
+                    <h3>{e.price} $</h3>
                     <Link to={`${e.id}`}><button>Узнать подробнее</button></Link>
                 </div>
             )
         })}
-    <Outlet />
     </div>
   )
 }
