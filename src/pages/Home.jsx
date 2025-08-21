@@ -15,6 +15,7 @@ export const Home = () => {
             <button>К постам</button>
         </Link>
         <Link to="/products"><button>К продуктам</button></Link>
+        <Link to="/clicker"><button>К кликеру</button></Link>
     </div>
   )
 }

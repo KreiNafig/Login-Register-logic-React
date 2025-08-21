@@ -1,5 +1,6 @@
 import { Route, Routes } from 'react-router-dom'
 import { lazy, Suspense, useCallback } from 'react'
+import { Clicker } from './pages/Clicker'
 
 const Home = lazy(() => import('./pages/Home'))
 const Login = lazy(() => import('./pages/Login'))
@@ -28,6 +29,7 @@ export const AppRoutes = () => {
             </PrivateRoute>} />
         <Route path="products" element={<PrivateRoute><Product /></PrivateRoute>} />
         <Route path="products/:id" element={<ProductDetail func={addFavorite} />} />
+        <Route path="clicker" element={<Clicker />} />
         <Route path="*" element={<ErrorPage />} />
     </Routes>
     </Suspense>
