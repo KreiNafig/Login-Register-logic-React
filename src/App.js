@@ -1,8 +1,7 @@
 import { BrowserRouter } from "react-router-dom";
 import { AppRoutes } from "./AppRoutes";
 import { createContext, useEffect, useState } from "react";
-import {Provider} from 'react-redux'
-import { store } from "./store/store";
+
 
 export const ContextAuth = createContext(false)
 
@@ -21,13 +20,11 @@ function App() {
 
   return (
     <>
-    <Provider store={store}>
     <ContextAuth.Provider value={{auth, setAuth}}>
     <BrowserRouter>
       <AppRoutes />
     </BrowserRouter>
     </ContextAuth.Provider>
-    </Provider>
     </>
   );
 }
