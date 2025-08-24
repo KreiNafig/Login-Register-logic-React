@@ -25,20 +25,20 @@ export const Dashboard = () => {
       localStorage.removeItem('token')
     }
     useEffect(() => {
-  if (status === 'idle' && posts.length === 0) {
+  if (status === 'idle') {
     dispatch(fetchPosts())
   }
-}, [dispatch, status, posts.length])
+}, [dispatch, status])
     console.log(posts)
   return (
     <>
-    <div>ПОСТЫ: {posts.length}</div>
+    <div>ПОСТЫ: {posts?.length}</div>
     <form onSubmit={handleSubmit}>
     <input name="title" value={title} onChange={(e) => setTitle(e.target.value)} placeholder='Заголовок' />
     <input name="text" value={body} onChange={(e) => setBody(e.target.value)} placeholder='текст' />
     <button type="submit">Отправить</button>
     </form>
-    <div>{posts.map((e) => (
+    <div>{posts?.map((e) => (
       <div key={e.id}>
       <h2>{e.title}</h2>
       <p>{e.body}</p>
