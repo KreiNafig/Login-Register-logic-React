@@ -1,10 +1,12 @@
 import {configureStore} from '@reduxjs/toolkit'
 import { count } from './slices/counterSlice'
-import { posts } from './slices/postSlice'
+import { postsApi } from './slices/apiSlice'
 
 export const store = configureStore({
     reducer: {
         counter: count,
-        post: posts,
-    }
+        [postsApi.reducerPath]: postsApi.reducer,
+    },
+
+    middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(postsApi.middleware),
 })
