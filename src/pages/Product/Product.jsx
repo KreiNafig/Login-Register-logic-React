@@ -1,48 +1,42 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useMemo } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
+import { useGetProductsQuery } from '../../store/slices/productSlice'
 
 export const Product = () => {
     const [searchParams, setSearchParams] = useSearchParams()
-    const [products, setProducts] = useState([])
+    const { data, isLoading, isError, error } = useGetProductsQuery()
     const navigate = useNavigate()
     const q = searchParams.get('q') || ''
     
-    useEffect(() => {
-      fetch('https://fakestoreapi.com/products')
-        .then((res) => res.json())
-        .then((data) => setProducts(data))
-    }, [])
 
     function filterProduct(type = '') {
       // eslint-disable-next-line default-case
       switch(type) {
         case 'asd': {
-          const filterProduct = [...products].sort((a, b) => a.price - b.price)
-          setProducts(filterProduct)
+          items = [...data]?.sort((a, b) => a.price - b.price)
           break;
           }          
         case 'dsa': {
-          const filterProduct = [...products].sort((a, b) => b.price - a.price)
-          setProducts(filterProduct)
+          items = [...data]?.sort((a, b) => b.price - a.price)
           break
         }
       }
     }
 
 
-  const items = useMemo(() => {
-    if(products.length === 0) return []
+  let items = useMemo(() => {
+    if(data?.length === 0) return []
     console.log('перефильтрация')
-    return products?.filter((e) => e.title.toLowerCase().includes(q.toLowerCase()))
-  }, [products, q])
+    return data?.filter((e) => e.title.toLowerCase().includes(q.toLowerCase()))
+  }, [data, q])
   
   return (
     <div>
         <input value={q} onChange={(e) => setSearchParams({...searchParams, q: e.target.value})} placeholder='Введите название' />
-        <button onClick={() => filterProduct('asd')}>Минимальная - Максимальная</button>
-        <button onClick={() => filterProduct('dsa')}>Максимальная - Минимальная</button>
+        <button disabled={(isError || isLoading)} onClick={() => filterProduct('asd')}>Минимальная - Максимальная</button>
+        <button disabled={(isError || isLoading)} onClick={() => filterProduct('dsa')}>Максимальная - Минимальная</button>
         <button onClick={() => navigate('/')}>Вернуться назад</button>
-        {items?.map((e) => {
+        <div>{isLoading ? <div>Загрузка товаров...</div> : isError ? <div>Произошла ошибка: {error.error}</div> : items?.map((e) => {
             return(
                 <div key={e.id}>
                     <h1>{e.title}</h1>
@@ -52,7 +46,7 @@ export const Product = () => {
                     <Link to={`${e.id}`}><button>Узнать подробнее</button></Link>
                 </div>
             )
-        })}
+        })}</div>
     </div>
   )
 }
