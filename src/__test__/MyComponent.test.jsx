@@ -1,4 +1,5 @@
-import { screen, render, fireEvent } from "@testing-library/react";
+import { screen, render } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom";
 import React, { useState } from 'react';
 
@@ -7,7 +8,7 @@ const SimpleHome = () => {
 
   return (
     <div>
-      <button onClick={() => setVisible(!visible)}>
+      <button name="text" onClick={() => setVisible(!visible)}>
         Показать скрытый текст
       </button>
       <div style={visible ? {display: "none"} : {display: "block"}}>
@@ -18,12 +19,28 @@ const SimpleHome = () => {
 };
 
 const ValidationInput = () => {
-    const [text, setText] = useState('')
+    const [login, setLogin] = useState('')
+    const [password, setPassword] = useState('')
+    const [valid, setValid] = useState(false)
+
+    function handleSubmit() {
+        setValid(true)
+    }
 
     return (
         <>
-        <label htmlFor="inputValidation">inputValidation</label>
-        <input id="inputValidation" name="inputValidation" value={text} onChange={(e) => setText(e.target.value)} />
+        {valid 
+        ? 
+        <div>Данные отправленные</div> 
+        :
+        <form onSubmit={() => handleSubmit()}>
+        <label htmlFor="Login">Login</label>
+        <input id="Login" name="inputValidation" value={login} onChange={(e) => setLogin(e.target.value)} />
+        <label htmlFor="password">Password</label>
+        <input id="password" name="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
+        <button type="submit">Отправить данные</button>
+        </form>
+        }
         </>
     )
 }
@@ -33,17 +50,30 @@ describe('validation and click', () => {
       render(<SimpleHome />);
       
       const button = screen.getByRole('button', { name: /показать скрытый текст/i });
-      fireEvent.click(button);
+      userEvent.click(button);
       
       const message = screen.getByText("Hello world!");
       expect(message).toBeInTheDocument();
     });
 
     test('validation', () => {
-        render(<ValidationInput />)
-        const input = screen.getByLabelText(/inputValidation/i)
-        fireEvent.change(input, {target: {value: "hello"}})
-        expect(input).toHaveValue("hello")
-        expect(input.value).toHaveLength(5)
-    })
-})
+      render(<ValidationInput />);
+      
+      const inputLogin = screen.getByLabelText(/login/i);
+      const inputPassword = screen.getByLabelText(/password/i)
+      const buttonSubmit = screen.getByRole('button', {name: /отправить данные/i})
+      
+      userEvent.type(inputLogin, "Login");
+      userEvent.type(inputPassword, "Password")
+
+      
+      expect(inputLogin).toHaveValue("Login");
+      expect(inputLogin.value).toHaveLength(5);
+      expect(inputPassword).toHaveValue("Password")
+      expect(inputPassword.value).toHaveLength(8)
+
+      userEvent.click(buttonSubmit)
+        const message = screen.getByText(/данные отправленные/i)
+        expect(message).toBeInTheDocument()
+    });
+});
